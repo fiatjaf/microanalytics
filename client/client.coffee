@@ -1,0 +1,16 @@
+post = require './micropost.coffee'
+
+send = (event, value) ->
+  info =
+    e: event
+    v: value
+    i: window.mai
+    d: (new Date()).toISOString()
+  post 'http://microanalytics.club/track', info, (text) ->
+    console.log text
+
+queue = window.maq
+window.ma = (calling_args...) ->
+  send.apply @, calling_args
+for calling_args in queue
+  send.apply @, calling_args

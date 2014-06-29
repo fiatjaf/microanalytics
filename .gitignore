@@ -1,0 +1,7 @@
+venv
+node_modules
+*.swo
+*.swp
+*.pyc
+*.pyc
+webapp/_attachments/tracker.js
