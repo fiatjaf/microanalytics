@@ -6,7 +6,7 @@ send = (event, value) ->
     v: value
     i: window.mai
     d: (new Date()).toISOString()
-  post 'http://microanalytics.club/track', info, (text) ->
+  post 'http://microanalytics.alhur.es/track', info, (text) ->
     console.log text
 
 queue = window.maq

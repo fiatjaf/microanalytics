@@ -4,5 +4,6 @@
   // ".*~$"
   // ".*\\.swp$"
   // ".*\\.bak$"
-  "Makefile"
+  "Makefile",
+  "client"
 ]
