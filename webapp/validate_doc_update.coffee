@@ -1,2 +1,2 @@
-->
-  throw forbidden: 'No one can ever upload anything.'
+(_, _, user) ->
+  throw forbidden: 'No one can ever upload anything.' if user.name isnt 'microanalytics'
