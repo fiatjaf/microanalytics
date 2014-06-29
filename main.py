@@ -36,8 +36,7 @@ def track():
 @app.route('/')
 def index():
     return render_template('index.html',
-        tracking_code=render_template('tracking_code.js',
-            tid=''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15)))
+        tid=''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(15))
     )
 
 @app.route('/<tid>')

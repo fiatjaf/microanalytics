@@ -1,0 +1,5 @@
+[
+    { "description": "Access to this database" , "from": "" , "to"  : "../.." },
+    { "from": "/*" , "to"  : "../../*" },
+    { "from": "tracker.js", "to": "/tracker.js"}
+]
