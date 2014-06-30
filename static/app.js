@@ -18637,7 +18637,7 @@ module.exports = function(arr, fn, initial){
   return curr;
 };
 },{}],140:[function(require,module,exports){
-var Main, React, div, pre, request, _ref;
+var Main, React, div, elem, pre, request, _ref;
 
 React = require('react');
 
@@ -18651,14 +18651,18 @@ Main = React.createClass({
       events: []
     };
   },
-  componentDidUpdate: function() {
+  componentDidMount: function() {
+    this.fetchPageViews();
+    this.fetchSessions();
+    return this.fetchEvents();
+  },
+  fetchEvents: function() {
     return request.get('http://couch.microanalytics.alhur.es/_all_docs').set('Accept', 'application/json').query({
       include_docs: true
     }).query({
-      descending: true
+      startkey: '"' + this.props.tid + '-"'
     }).query({
-      startkey: this.props.tid + '-',
-      endkey: this.props.tid
+      endkey: '"' + this.props.tid + '-\uffff"'
     }).end((function(_this) {
       return function(res) {
         return _this.setState({
@@ -18667,6 +18671,8 @@ Main = React.createClass({
       };
     })(this));
   },
+  fetchPageViews: function() {},
+  fetchSessions: function() {},
   render: function() {
     var doc;
     return div({}, (function() {
@@ -18682,9 +18688,11 @@ Main = React.createClass({
   }
 });
 
-div = document.getElementById('show');
+elem = document.getElementById('show');
 
-React.renderComponent(Main(div.tid), div);
+React.renderComponent(Main({
+  tid: elem.dataset.tid
+}), elem);
 
 
 },{"react":136,"superagent":137}]},{},[140])

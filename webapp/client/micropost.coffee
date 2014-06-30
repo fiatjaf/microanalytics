@@ -4,6 +4,6 @@ module.exports = (url, json, callback) ->
     if xhr.readyState == 4
       callback(xhr.responseText) if callback
   xhr.open 'POST', url, true
+  xhr.withCredentials = true
   xhr.setRequestHeader 'Content-type', 'application/json'
-  xhr.setRequestHeader 'Connection', 'close'
   xhr.send JSON.stringify json
