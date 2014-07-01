@@ -18657,7 +18657,7 @@ Main = React.createClass({
     return this.fetchEvents();
   },
   fetchEvents: function() {
-    return request.get('http://couch.microanalytics.alhur.es/_all_docs').set('Accept', 'application/json').query({
+    return request.get('http://microanalytics.couchappy.com/_all_docs').set('Accept', 'application/json').query({
       include_docs: true
     }).query({
       startkey: '"' + this.props.tid + '-"'

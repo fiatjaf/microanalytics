@@ -13,7 +13,7 @@ Main = React.createClass
     @fetchEvents()
   
   fetchEvents: ->
-    request.get('http://couch.microanalytics.alhur.es/_all_docs')
+    request.get('http://microanalytics.couchappy.com/_all_docs')
            .set('Accept', 'application/json')
            .query(include_docs: true)
            .query(startkey: '"' + @props.tid + '-"')

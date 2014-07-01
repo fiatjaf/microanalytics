@@ -54,7 +54,7 @@ def track():
         'session': session['id'],
         'date': body['d']
     }
-    r = requests.put('http://couch.microanalytics.alhur.es/%s' % _id,
+    r = requests.put('http://microanalytics.couchappy.com/%s' % _id,
                      data=json.dumps(doc),
                      auth=('microanalytics', '43pbfibsalfk3q2b5rlw'))
     if r.ok:
