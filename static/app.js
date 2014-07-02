@@ -18650,7 +18650,7 @@ chartOptions = {
   scaleGridLineColor: "rgba(0,0,0,.05)",
   scaleGridLineWidth: 1,
   bezierCurve: true,
-  bezierCurveTension: 0.8,
+  bezierCurveTension: 0.2,
   pointDotRadius: 4,
   pointDotStrokeWidth: 1,
   datasetStroke: true,
@@ -18698,49 +18698,69 @@ Main = React.createClass({
       return function(res) {
         return _this.setState({
           pageViews: res.body.rows
-        }, _this.drawPageViewsChart);
+        }, function() {
+          return this.drawChart(this.state.pageViews, this.refs.pageViewsCanvas);
+        });
       };
     })(this));
   },
-  drawPageViewsChart: function() {
-    var chart, ctx, days, iterDay, pageViews, r, stringDay, stringMaxDay, stringMinDay, values, _i, _len, _ref1;
-    if (this.state.pageViews.length) {
-      values = {};
-      _ref1 = this.state.pageViews;
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        r = _ref1[_i];
-        values[r.key[1]] = r.value;
+  fetchSessions: function() {
+    return request.get('http://microanalytics.couchappy.com/_design/webapp/_list/unique-sessions/page-views').set('Accept', 'application/json').query({
+      startkey: '["' + this.props.tid + '"]'
+    }).query({
+      endkey: '["' + this.props.tid + '", {}]'
+    }).query({
+      reduce: true,
+      group_level: 3
+    }).end((function(_this) {
+      return function(res) {
+        return _this.setState({
+          uniqueSessions: res.body.rows
+        }, function() {
+          return this.drawChart(this.state.uniqueSessions, this.refs.uniqueSessionsCanvas);
+        });
+      };
+    })(this));
+  },
+  drawChart: function(rows, canvasRef) {
+    var chart, ctx, days, iterDay, r, stringDay, stringMaxDay, stringMinDay, valueIndex, values, _i, _len;
+    if (rows.length) {
+      valueIndex = {};
+      for (_i = 0, _len = rows.length; _i < _len; _i++) {
+        r = rows[_i];
+        valueIndex[r.key[1]] = r.value;
       }
-      stringMinDay = this.state.pageViews[0].key[1];
-      stringMaxDay = this.state.pageViews.slice(-1)[0].key[1];
+      stringMinDay = rows[0].key[1];
+      stringMaxDay = (new Date()).toISOString().split('T')[0];
       iterDay = new Date(Date.parse(stringMinDay));
       iterDay.setDate(iterDay.getDate() - 1);
       days = [];
-      pageViews = [];
+      values = [];
       while (iterDay.setDate(iterDay.getDate() + 1)) {
         stringDay = iterDay.toISOString().split('T')[0];
-        days.push(stringDay);
-        pageViews.push(values[stringDay] || 0);
+        days.push("" + (stringDay.split('-')[2]) + "/" + (stringDay.split('-')[1]));
+        values.push(valueIndex[stringDay] || 0);
         if (stringDay === stringMaxDay) {
           break;
         }
       }
-      ctx = this.refs.pageViewsCanvas.getDOMNode().getContext('2d');
+      ctx = canvasRef.getDOMNode().getContext('2d');
       return chart = new Chart(ctx).Line({
         labels: days,
         datasets: [
           {
-            data: pageViews
+            data: values
           }
         ]
       }, chartOptions);
     }
   },
-  fetchSessions: function() {},
   render: function() {
     var doc;
     return div({}, div({}, h3({}, 'Total page views'), canvas({
       ref: 'pageViewsCanvas'
+    })), div({}, h3({}, 'Total unique sessions'), canvas({
+      ref: 'uniqueSessionsCanvas'
     })), div({}, h3({}, 'Events'), (function() {
       var _i, _len, _ref1, _results;
       _ref1 = this.state.events;

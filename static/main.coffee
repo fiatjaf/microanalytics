@@ -9,7 +9,7 @@ chartOptions =
   scaleGridLineColor : "rgba(0,0,0,.05)"
   scaleGridLineWidth : 1
   bezierCurve : true
-  bezierCurveTension : 0.8
+  bezierCurveTension : 0.2
   pointDotRadius : 4
   pointDotStrokeWidth : 1
   datasetStroke : true
@@ -43,44 +43,55 @@ Main = React.createClass
            .query(endkey: '["' + @props.tid + '", {}]')
            .query(reduce: true, group_level: 2)
            .end (res) =>
-      @setState pageViews: res.body.rows, @drawPageViewsChart
+      @setState pageViews: res.body.rows, ->
+        @drawChart @state.pageViews, @refs.pageViewsCanvas
 
-  drawPageViewsChart: ->
-    if @state.pageViews.length
-      values = {}
-      for r in @state.pageViews
-        values[r.key[1]] = r.value
-      stringMinDay = @state.pageViews[0].key[1]
-      stringMaxDay = @state.pageViews.slice(-1)[0].key[1]
+  fetchSessions: ->
+    request.get('http://microanalytics.couchappy.com/_design/webapp/_list/unique-sessions/page-views')
+           .set('Accept', 'application/json')
+           .query(startkey: '["' + @props.tid + '"]')
+           .query(endkey: '["' + @props.tid + '", {}]')
+           .query(reduce: true, group_level: 3)
+           .end (res) =>
+      @setState uniqueSessions: res.body.rows, ->
+        @drawChart @state.uniqueSessions, @refs.uniqueSessionsCanvas
+
+  drawChart: (rows, canvasRef) ->
+    if rows.length
+      valueIndex = {}
+      for r in rows
+        valueIndex[r.key[1]] = r.value
+      stringMinDay = rows[0].key[1]
+      stringMaxDay = (new Date()).toISOString().split('T')[0]
 
       iterDay = new Date(Date.parse stringMinDay)
       iterDay.setDate iterDay.getDate()-1
       days = []
-      pageViews = []
+      values = []
       while iterDay.setDate(iterDay.getDate()+1)
         stringDay = iterDay.toISOString().split('T')[0]
-        days.push stringDay
-        pageViews.push values[stringDay] or 0
+        days.push "#{stringDay.split('-')[2]}/#{stringDay.split('-')[1]}"
+        values.push valueIndex[stringDay] or 0
         if stringDay == stringMaxDay
           break
 
-      ctx = @refs.pageViewsCanvas.getDOMNode().getContext('2d')
+      ctx = canvasRef.getDOMNode().getContext('2d')
       chart = new Chart(ctx).Line
         labels: days
         datasets: [
-          data: pageViews
+          data: values
         ]
       , chartOptions
-
-  fetchSessions: ->
-    
-
 
   render: ->
     (div {},
       (div {},
         (h3 {}, 'Total page views'),
         (canvas ref: 'pageViewsCanvas')
+      )
+      (div {},
+        (h3 {}, 'Total unique sessions'),
+        (canvas ref: 'uniqueSessionsCanvas')
       )
       (div {},
         (h3 {}, 'Events'),
