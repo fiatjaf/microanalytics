@@ -18637,18 +18637,33 @@ module.exports = function(arr, fn, initial){
   return curr;
 };
 },{}],140:[function(require,module,exports){
-var Main, React, div, elem, pre, request, _ref;
+var Main, React, canvas, chartOptions, div, elem, h3, pre, request, _ref;
 
 React = require('react');
 
 request = require('superagent');
 
-_ref = React.DOM, div = _ref.div, pre = _ref.pre;
+_ref = React.DOM, div = _ref.div, pre = _ref.pre, canvas = _ref.canvas, h3 = _ref.h3;
+
+chartOptions = {
+  scaleShowGridLines: true,
+  scaleGridLineColor: "rgba(0,0,0,.05)",
+  scaleGridLineWidth: 1,
+  bezierCurve: true,
+  bezierCurveTension: 0.8,
+  pointDotRadius: 4,
+  pointDotStrokeWidth: 1,
+  datasetStroke: true,
+  datasetStrokeWidth: 2,
+  datasetFill: true,
+  legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+};
 
 Main = React.createClass({
   getInitialState: function() {
     return {
-      events: []
+      events: [],
+      pageViews: []
     };
   },
   componentDidMount: function() {
@@ -18671,11 +18686,62 @@ Main = React.createClass({
       };
     })(this));
   },
-  fetchPageViews: function() {},
+  fetchPageViews: function() {
+    return request.get('http://microanalytics.couchappy.com/_design/webapp/_view/page-views').set('Accept', 'application/json').query({
+      startkey: '["' + this.props.tid + '"]'
+    }).query({
+      endkey: '["' + this.props.tid + '", {}]'
+    }).query({
+      reduce: true,
+      group_level: 2
+    }).end((function(_this) {
+      return function(res) {
+        return _this.setState({
+          pageViews: res.body.rows
+        }, _this.drawPageViewsChart);
+      };
+    })(this));
+  },
+  drawPageViewsChart: function() {
+    var chart, ctx, days, iterDay, pageViews, r, stringDay, stringMaxDay, stringMinDay, values, _i, _len, _ref1;
+    if (this.state.pageViews.length) {
+      values = {};
+      _ref1 = this.state.pageViews;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        r = _ref1[_i];
+        values[r.key[1]] = r.value;
+      }
+      stringMinDay = this.state.pageViews[0].key[1];
+      stringMaxDay = this.state.pageViews.slice(-1)[0].key[1];
+      iterDay = new Date(Date.parse(stringMinDay));
+      iterDay.setDate(iterDay.getDate() - 1);
+      days = [];
+      pageViews = [];
+      while (iterDay.setDate(iterDay.getDate() + 1)) {
+        stringDay = iterDay.toISOString().split('T')[0];
+        days.push(stringDay);
+        pageViews.push(values[stringDay] || 0);
+        if (stringDay === stringMaxDay) {
+          break;
+        }
+      }
+      ctx = this.refs.pageViewsCanvas.getDOMNode().getContext('2d');
+      return chart = new Chart(ctx).Line({
+        labels: days,
+        datasets: [
+          {
+            data: pageViews
+          }
+        ]
+      }, chartOptions);
+    }
+  },
   fetchSessions: function() {},
   render: function() {
     var doc;
-    return div({}, (function() {
+    return div({}, div({}, h3({}, 'Total page views'), canvas({
+      ref: 'pageViewsCanvas'
+    })), div({}, h3({}, 'Events'), (function() {
       var _i, _len, _ref1, _results;
       _ref1 = this.state.events;
       _results = [];
@@ -18684,7 +18750,7 @@ Main = React.createClass({
         _results.push(pre({}, JSON.stringify(doc, null, 2)));
       }
       return _results;
-    }).call(this));
+    }).call(this)));
   }
 });
 
