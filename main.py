@@ -47,6 +47,7 @@ def track():
         '_id': _id,
         'tid': body['i'],
         'page': request.referrer,
+        'referrer': body['r'],
         'ip': request.remote_addr,
         'user-agent': request.headers['User-agent'],
         'event': body['e'],

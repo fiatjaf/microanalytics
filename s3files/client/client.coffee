@@ -5,6 +5,7 @@ send = (event, value) ->
     e: event
     v: value
     i: window.mai
+    r: document.referrer
     d: (new Date()).toISOString()
   post 'http://microanalytics.alhur.es/track', info, (text) ->
     console.log text
