@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+  {% for tid in tids %}
+  
+    <iframe class="multiple" src="{{ request.url_root }}/{{ tid }}"></iframe>
+  
+  {% endfor %}
+
+{% endblock %}
