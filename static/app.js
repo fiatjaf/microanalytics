@@ -18758,9 +18758,11 @@ Main = React.createClass({
   render: function() {
     var doc;
     return div({}, div({}, h3({}, 'Total page views'), canvas({
-      ref: 'pageViewsCanvas'
+      ref: 'pageViewsCanvas',
+      width: 800
     })), div({}, h3({}, 'Total unique sessions'), canvas({
-      ref: 'uniqueSessionsCanvas'
+      ref: 'uniqueSessionsCanvas',
+      width: 800
     })), div({}, h3({}, 'Events'), (function() {
       var _i, _len, _ref1, _results;
       _ref1 = this.state.events;

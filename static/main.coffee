@@ -87,11 +87,11 @@ Main = React.createClass
     (div {},
       (div {},
         (h3 {}, 'Total page views'),
-        (canvas ref: 'pageViewsCanvas')
+        (canvas ref: 'pageViewsCanvas', width: 800)
       )
       (div {},
         (h3 {}, 'Total unique sessions'),
-        (canvas ref: 'uniqueSessionsCanvas')
+        (canvas ref: 'uniqueSessionsCanvas', width: 800)
       )
       (div {},
         (h3 {}, 'Events'),
