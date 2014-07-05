@@ -1,26 +1,26 @@
 React = require 'react'
 request = require 'superagent'
 
-{div, pre, canvas,
- h3} = React.DOM
+{div, canvas,
+ ul, li, p, h3} = React.DOM
 
 chartOptions =
   scaleShowGridLines: true
   scaleGridLineColor : "rgba(0,0,0,.05)"
   scaleGridLineWidth : 1
   bezierCurve : true
-  bezierCurveTension : 0.2
+  bezierCurveTension : 7
   pointDotRadius : 4
   pointDotStrokeWidth : 1
   datasetStroke : true
   datasetStrokeWidth : 2
   datasetFill : true
-  legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
 
 Main = React.createClass
   getInitialState: ->
     events: []
     pageViews: []
+    uniqueSessions: []
 
   componentDidMount: ->
     @fetchPageViews()
@@ -31,8 +31,9 @@ Main = React.createClass
     request.get('http://microanalytics.couchappy.com/_all_docs')
            .set('Accept', 'application/json')
            .query(include_docs: true)
-           .query(startkey: '"' + @props.tid + '-"')
-           .query(endkey: '"' + @props.tid + '-\uffff"')
+           .query(descending: true)
+           .query(endkey: '"' + @props.tid + '-"')
+           .query(startkey: '"' + @props.tid + '-\uffff"')
            .end (res) =>
       @setState events: res.body.rows
 
@@ -95,7 +96,13 @@ Main = React.createClass
       )
       (div {},
         (h3 {}, 'Events'),
-        (pre {}, JSON.stringify doc, null, 2) for doc in @state.events
+        (ul {},
+          (li key: row.doc._id,
+            "#{row.doc.event}: #{row.doc.value} from
+             #{row.doc.session.slice(0, 7)} at #{row.doc.page},
+             #{new Date(Date.parse row.doc.date).toString().split(' ').slice(1, -2).join(' ')}"
+          ) for row in @state.events
+        )
       )
     )
 

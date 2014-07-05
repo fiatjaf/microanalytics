@@ -18637,33 +18637,33 @@ module.exports = function(arr, fn, initial){
   return curr;
 };
 },{}],140:[function(require,module,exports){
-var Main, React, canvas, chartOptions, div, elem, h3, pre, request, _ref;
+var Main, React, canvas, chartOptions, div, elem, h3, li, p, request, ul, _ref;
 
 React = require('react');
 
 request = require('superagent');
 
-_ref = React.DOM, div = _ref.div, pre = _ref.pre, canvas = _ref.canvas, h3 = _ref.h3;
+_ref = React.DOM, div = _ref.div, canvas = _ref.canvas, ul = _ref.ul, li = _ref.li, p = _ref.p, h3 = _ref.h3;
 
 chartOptions = {
   scaleShowGridLines: true,
   scaleGridLineColor: "rgba(0,0,0,.05)",
   scaleGridLineWidth: 1,
   bezierCurve: true,
-  bezierCurveTension: 0.2,
+  bezierCurveTension: 7,
   pointDotRadius: 4,
   pointDotStrokeWidth: 1,
   datasetStroke: true,
   datasetStrokeWidth: 2,
-  datasetFill: true,
-  legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+  datasetFill: true
 };
 
 Main = React.createClass({
   getInitialState: function() {
     return {
       events: [],
-      pageViews: []
+      pageViews: [],
+      uniqueSessions: []
     };
   },
   componentDidMount: function() {
@@ -18675,9 +18675,11 @@ Main = React.createClass({
     return request.get('http://microanalytics.couchappy.com/_all_docs').set('Accept', 'application/json').query({
       include_docs: true
     }).query({
-      startkey: '"' + this.props.tid + '-"'
+      descending: true
     }).query({
-      endkey: '"' + this.props.tid + '-\uffff"'
+      endkey: '"' + this.props.tid + '-"'
+    }).query({
+      startkey: '"' + this.props.tid + '-\uffff"'
     }).end((function(_this) {
       return function(res) {
         return _this.setState({
@@ -18756,23 +18758,25 @@ Main = React.createClass({
     }
   },
   render: function() {
-    var doc;
+    var row;
     return div({}, div({}, h3({}, 'Total page views'), canvas({
       ref: 'pageViewsCanvas',
       width: 800
     })), div({}, h3({}, 'Total unique sessions'), canvas({
       ref: 'uniqueSessionsCanvas',
       width: 800
-    })), div({}, h3({}, 'Events'), (function() {
+    })), div({}, h3({}, 'Events'), ul({}, (function() {
       var _i, _len, _ref1, _results;
       _ref1 = this.state.events;
       _results = [];
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        doc = _ref1[_i];
-        _results.push(pre({}, JSON.stringify(doc, null, 2)));
+        row = _ref1[_i];
+        _results.push(li({
+          key: row.doc._id
+        }, "" + row.doc.event + ": " + row.doc.value + " from " + (row.doc.session.slice(0, 7)) + " at " + row.doc.page + ", " + (new Date(Date.parse(row.doc.date)).toString().split(' ').slice(1, -2).join(' '))));
       }
       return _results;
-    }).call(this)));
+    }).call(this))));
   }
 });
 
