@@ -4,7 +4,7 @@
 
   {% for tid in tids %}
   
-    <iframe class="multiple" src="{{ request.url_root }}/{{ tid }}"></iframe>
+    <iframe class="multiple" src="{{ request.url_root }}/{{ tid }}?multi=true"></iframe>
   
   {% endfor %}
 

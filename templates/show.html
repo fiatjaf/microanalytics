@@ -4,6 +4,12 @@
 
 <main>
 
+  {% if request.args.get('multi') %}
+  <div>
+    <a href="/{{tid}}" target="_blank">{{tid}}</a>
+  </div>
+  {% endif %}
+
   <div id="show" data-tid="{{tid}}"></div>
   <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.min.js"></script>
   <script src="static/app.js"></script>
