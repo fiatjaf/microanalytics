@@ -28,7 +28,7 @@ Main = React.createClass
     @fetchEvents()
   
   fetchEvents: ->
-    request.get('http://microanalytics.couchappy.com/_all_docs')
+    request.get('http://spooner.alhur.es:5984/microanalytics/_all_docs')
            .set('Accept', 'application/json')
            .query(include_docs: true)
            .query(descending: true)
@@ -38,7 +38,7 @@ Main = React.createClass
       @setState events: res.body.rows
 
   fetchPageViews: ->
-    request.get('http://microanalytics.couchappy.com/_design/webapp/_view/page-views')
+    request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_view/page-views')
            .set('Accept', 'application/json')
            .query(startkey: '["' + @props.tid + '"]')
            .query(endkey: '["' + @props.tid + '", {}]')
@@ -48,7 +48,7 @@ Main = React.createClass
         @drawChart @state.pageViews, @refs.pageViewsCanvas
 
   fetchSessions: ->
-    request.get('http://microanalytics.couchappy.com/_design/webapp/_list/unique-sessions/page-views')
+    request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_list/unique-sessions/page-views')
            .set('Accept', 'application/json')
            .query(startkey: '["' + @props.tid + '"]')
            .query(endkey: '["' + @props.tid + '", {}]')

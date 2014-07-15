@@ -18672,7 +18672,7 @@ Main = React.createClass({
     return this.fetchEvents();
   },
   fetchEvents: function() {
-    return request.get('http://microanalytics.couchappy.com/_all_docs').set('Accept', 'application/json').query({
+    return request.get('http://spooner.alhur.es:5984/microanalytics/_all_docs').set('Accept', 'application/json').query({
       include_docs: true
     }).query({
       descending: true
@@ -18689,7 +18689,7 @@ Main = React.createClass({
     })(this));
   },
   fetchPageViews: function() {
-    return request.get('http://microanalytics.couchappy.com/_design/webapp/_view/page-views').set('Accept', 'application/json').query({
+    return request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_view/page-views').set('Accept', 'application/json').query({
       startkey: '["' + this.props.tid + '"]'
     }).query({
       endkey: '["' + this.props.tid + '", {}]'
@@ -18707,7 +18707,7 @@ Main = React.createClass({
     })(this));
   },
   fetchSessions: function() {
-    return request.get('http://microanalytics.couchappy.com/_design/webapp/_list/unique-sessions/page-views').set('Accept', 'application/json').query({
+    return request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_list/unique-sessions/page-views').set('Accept', 'application/json').query({
       startkey: '["' + this.props.tid + '"]'
     }).query({
       endkey: '["' + this.props.tid + '", {}]'
