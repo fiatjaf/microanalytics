@@ -18637,13 +18637,13 @@ module.exports = function(arr, fn, initial){
   return curr;
 };
 },{}],140:[function(require,module,exports){
-var Main, React, canvas, chartOptions, div, elem, h3, li, p, request, ul, _ref;
+var Main, React, canvas, chartOptions, div, elem, h3, li, p, request, table, tbody, td, th, thead, tr, ul, _ref;
 
 React = require('react');
 
 request = require('superagent');
 
-_ref = React.DOM, div = _ref.div, canvas = _ref.canvas, ul = _ref.ul, li = _ref.li, p = _ref.p, h3 = _ref.h3;
+_ref = React.DOM, div = _ref.div, canvas = _ref.canvas, table = _ref.table, thead = _ref.thead, th = _ref.th, tbody = _ref.tbody, td = _ref.td, tr = _ref.tr, ul = _ref.ul, li = _ref.li, p = _ref.p, h3 = _ref.h3;
 
 chartOptions = {
   scaleShowGridLines: true,
@@ -18662,12 +18662,10 @@ Main = React.createClass({
   getInitialState: function() {
     return {
       events: [],
-      pageViews: [],
       uniqueSessions: []
     };
   },
   componentDidMount: function() {
-    this.fetchPageViews();
     this.fetchSessions();
     return this.fetchEvents();
   },
@@ -18680,28 +18678,12 @@ Main = React.createClass({
       endkey: '"' + this.props.tid + '-"'
     }).query({
       startkey: '"' + this.props.tid + '-\uffff"'
+    }).query({
+      limit: 100
     }).end((function(_this) {
       return function(res) {
         return _this.setState({
           events: res.body.rows
-        });
-      };
-    })(this));
-  },
-  fetchPageViews: function() {
-    return request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_view/page-views').set('Accept', 'application/json').query({
-      startkey: '["' + this.props.tid + '"]'
-    }).query({
-      endkey: '["' + this.props.tid + '", {}]'
-    }).query({
-      reduce: true,
-      group_level: 2
-    }).end((function(_this) {
-      return function(res) {
-        return _this.setState({
-          pageViews: res.body.rows
-        }, function() {
-          return this.drawChart(this.state.pageViews, this.refs.pageViewsCanvas);
         });
       };
     })(this));
@@ -18759,24 +18741,23 @@ Main = React.createClass({
   },
   render: function() {
     var row;
-    return div({}, div({}, h3({}, 'Total page views'), canvas({
-      ref: 'pageViewsCanvas',
-      width: 800
-    })), div({}, h3({}, 'Total unique sessions'), canvas({
+    return div({}, div({}, h3({}, 'Total unique sessions'), canvas({
       ref: 'uniqueSessionsCanvas',
       width: 800
-    })), div({}, h3({}, 'Events'), ul({}, (function() {
+    })), div({}, h3({}, 'Events'), table({
+      className: 'pure-table pure-table-horizontal'
+    }, thead({}, th({}, 'Event'), th({}, 'Value'), th({}, 'Date'), th({}, 'Page'), th({}, 'Session'), th({}, 'Referrer')), tbody({}, (function() {
       var _i, _len, _ref1, _results;
       _ref1 = this.state.events;
       _results = [];
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         row = _ref1[_i];
-        _results.push(li({
+        _results.push(tr({
           key: row.doc._id
-        }, "" + row.doc.event + ": " + row.doc.value + " from " + (row.doc.session.slice(0, 7)) + " at " + row.doc.page + ", " + (new Date(Date.parse(row.doc.date)).toString().split(' ').slice(1, -2).join(' '))));
+        }, td({}, row.doc.event), td({}, row.doc.value), td({}, new Date(Date.parse(row.doc.date)).toString().split(' ').slice(1, -2).join(' ')), td({}, row.doc.page), td({}, row.doc.session.slice(0, 7)), td({}, row.doc.referrer || '')));
       }
       return _results;
-    }).call(this))));
+    }).call(this)))));
   }
 });
 

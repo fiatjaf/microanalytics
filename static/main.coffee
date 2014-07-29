@@ -2,6 +2,7 @@ React = require 'react'
 request = require 'superagent'
 
 {div, canvas,
+ table, thead, th, tbody, td, tr,
  ul, li, p, h3} = React.DOM
 
 chartOptions =
@@ -19,11 +20,9 @@ chartOptions =
 Main = React.createClass
   getInitialState: ->
     events: []
-    pageViews: []
     uniqueSessions: []
 
   componentDidMount: ->
-    @fetchPageViews()
     @fetchSessions()
     @fetchEvents()
   
@@ -34,18 +33,9 @@ Main = React.createClass
            .query(descending: true)
            .query(endkey: '"' + @props.tid + '-"')
            .query(startkey: '"' + @props.tid + '-\uffff"')
+           .query(limit: 100)
            .end (res) =>
       @setState events: res.body.rows
-
-  fetchPageViews: ->
-    request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_view/page-views')
-           .set('Accept', 'application/json')
-           .query(startkey: '["' + @props.tid + '"]')
-           .query(endkey: '["' + @props.tid + '", {}]')
-           .query(reduce: true, group_level: 2)
-           .end (res) =>
-      @setState pageViews: res.body.rows, ->
-        @drawChart @state.pageViews, @refs.pageViewsCanvas
 
   fetchSessions: ->
     request.get('http://spooner.alhur.es:5984/microanalytics/_design/webapp/_list/unique-sessions/page-views')
@@ -87,21 +77,30 @@ Main = React.createClass
   render: ->
     (div {},
       (div {},
-        (h3 {}, 'Total page views'),
-        (canvas ref: 'pageViewsCanvas', width: 800)
-      )
-      (div {},
         (h3 {}, 'Total unique sessions'),
         (canvas ref: 'uniqueSessionsCanvas', width: 800)
       )
       (div {},
         (h3 {}, 'Events'),
-        (ul {},
-          (li key: row.doc._id,
-            "#{row.doc.event}: #{row.doc.value} from
-             #{row.doc.session.slice(0, 7)} at #{row.doc.page},
-             #{new Date(Date.parse row.doc.date).toString().split(' ').slice(1, -2).join(' ')}"
-          ) for row in @state.events
+        (table className: 'pure-table pure-table-horizontal',
+          (thead {},
+            (th {}, 'Event'),
+            (th {}, 'Value'),
+            (th {}, 'Date'),
+            (th {}, 'Page'),
+            (th {}, 'Session'),
+            (th {}, 'Referrer')
+          )
+          (tbody {},
+            (tr key: row.doc._id,
+              (td {}, row.doc.event)
+              (td {}, row.doc.value)
+              (td {}, new Date(Date.parse row.doc.date).toString().split(' ').slice(1, -2).join(' '))
+              (td {}, row.doc.page)
+              (td {}, row.doc.session.slice(0, 7))
+              (td {}, row.doc.referrer or '')
+            ) for row in @state.events
+          )
         )
       )
     )
