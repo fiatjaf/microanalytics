@@ -1,21 +1,9 @@
-React = require 'react'
+ReactLineChart = require 'react-charts-line'
 request = require 'superagent'
 
-{div, canvas,
+{div,
  table, thead, th, tbody, td, tr,
  ul, li, p, h3} = React.DOM
-
-chartOptions =
-  scaleShowGridLines: true
-  scaleGridLineColor : "rgba(0,0,0,.05)"
-  scaleGridLineWidth : 1
-  bezierCurve : true
-  bezierCurveTension : 7
-  pointDotRadius : 4
-  pointDotStrokeWidth : 1
-  datasetStroke : true
-  datasetStrokeWidth : 2
-  datasetFill : true
 
 Main = React.createClass
   getInitialState: ->
@@ -44,41 +32,27 @@ Main = React.createClass
            .query(endkey: '["' + @props.tid + '", {}]')
            .query(reduce: true, group_level: 3)
            .end (res) =>
-      @setState uniqueSessions: res.body.rows, ->
-        @drawChart @state.uniqueSessions, @refs.uniqueSessionsCanvas
-
-  drawChart: (rows, canvasRef) ->
-    if rows.length
-      valueIndex = {}
-      for r in rows
-        valueIndex[r.key[1]] = r.value
-      stringMinDay = rows[0].key[1]
-      stringMaxDay = (new Date()).toISOString().split('T')[0]
-
-      iterDay = new Date(Date.parse stringMinDay)
-      iterDay.setDate iterDay.getDate()-1
-      days = []
-      values = []
-      while iterDay.setDate(iterDay.getDate()+1)
-        stringDay = iterDay.toISOString().split('T')[0]
-        days.push "#{stringDay.split('-')[2]}/#{stringDay.split('-')[1]}"
-        values.push valueIndex[stringDay] or 0
-        if stringDay == stringMaxDay
-          break
-
-      ctx = canvasRef.getDOMNode().getContext('2d')
-      chart = new Chart(ctx).Line
-        labels: days
-        datasets: [
-          data: values
-        ]
-      , chartOptions
+      @setState uniqueSessions: res.body.rows
 
   render: ->
+    data = ({
+      x: Date.parse(r.key[1])
+      y: r.value
+    } for r in @state.uniqueSessions)
+
     (div {},
       (div {},
         (h3 {}, 'Total unique sessions'),
-        (canvas ref: 'uniqueSessionsCanvas', width: 800)
+        (ReactLineChart
+          data: data
+          width: 960
+          height: 300
+          series:
+            x:
+              scale: 'time'
+            y:
+              scale: 'linear'
+        )
       )
       (div {},
         (h3 {}, 'Events'),

@@ -71,8 +71,3 @@ def index():
 @app.route('/<tid>')
 def show(tid):
     return render_template('show.html', tid=tid)
-
-@app.route('/multiple')
-def multiple():
-    tids = request.args.getlist('t')
-    return render_template('multi.html', tids=tids)
