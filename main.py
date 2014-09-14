@@ -42,7 +42,8 @@ def track():
     session['id'] = session.get('id', str(uuid()))
     request.get_data()
     body = request.json
-    _id = '%s-%s' % (body['i'], body['d'])
+    date = datetime.datetime.now().isoformat()
+    _id = '%s-%s' % (body['i'], date)
     doc = {
         '_id': _id,
         'tid': body['i'],
@@ -53,7 +54,7 @@ def track():
         'event': body['e'],
         'value': body.get('v', 1),
         'session': session['id'],
-        'date': body['d']
+        'date': date
     }
     r = requests.put('http://spooner.alhur.es:5984/microanalytics/%s' % _id,
                      data=json.dumps(doc),

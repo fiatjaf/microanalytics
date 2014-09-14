@@ -10,8 +10,7 @@ send = function(event, value) {
     e: event,
     v: value,
     i: window.mai,
-    r: document.referrer,
-    d: (new Date()).toISOString()
+    r: document.referrer
   };
   return post('http://microanalytics.alhur.es/track', info, function(text) {
     return console.log(text);
