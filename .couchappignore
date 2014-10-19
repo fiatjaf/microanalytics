@@ -1,0 +1,10 @@
+[
+  ".*~$",
+  ".*\\.swp$",
+  ".*\\.bak$",
+  ".*\\.coffee$",
+  "package.json",
+  "node_modules",
+  "Makefile",
+  "cli"
+]

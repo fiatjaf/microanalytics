@@ -1,0 +1,22 @@
+{
+  "name": "microanalytics",
+  "version": "0.0.1",
+  "description": "A web analytics CouchApp.",
+  "scripts": {
+    "build-prod": "npm run build && npm run minify",
+    "minify": "uglifyjs _attachments/tracker.js -o _attachments/tracker.js",
+    "build": "npm run build-js && npm run build-ddoc",
+    "build-js": "NODE_PATH=. browserify -t coffeeify app/tracker.coffee > _attachments/tracker.js",
+    "build-ddoc": "coffee --bare -c shows/. updates/. views/. lists/. validate_doc_update.coffee lib/."
+  },
+  "keywords": [
+    "couchapp",
+    "analytics"
+  ],
+  "author": "Giovanni T. Parra",
+  "license": "MIT",
+  "devDependencies": {
+    "coffeeify": "^0.7.0",
+    "browserify": "^6.1.0"
+  }
+}

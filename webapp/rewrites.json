@@ -1,4 +1,0 @@
-[
-    { "description": "Access to this database" , "from": "" , "to"  : "../.." },
-    { "from": "/*" , "to"  : "../../*" }
-]

@@ -1,8 +1,5 @@
-venv
 node_modules
+Makefile
 *.swo
 *.swp
-*.pyc
-*.pyc
-webapp/_attachments/tracker.js
-cli
+validate_doc_update.js

@@ -1,0 +1,8 @@
+[
+    { "from": "tracker.js", "to": "tracker.js" },
+    { "from": "track", "to": "_update/track" },
+    { "from": "_ddoc" , "to": "" },
+    { "from": "_ddoc/*" , "to": "*" },
+    { "from": "/*" , "to": "../../*" },
+    { "from": "" , "to": "_show/snippet" }
+]
