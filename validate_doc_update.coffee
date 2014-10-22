@@ -10,7 +10,7 @@
     if val and typeof val is 'object'
       throw forbidden: key + ' is an object and this is forbidden.'
 
-    if val.toString().length > 250
+    if val.toString().length > 250 and key isnt 'page'
       throw forbidden: key + ' is too big.'
 
     switch key
