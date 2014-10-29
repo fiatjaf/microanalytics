@@ -3,8 +3,9 @@
 
   provides 'html', ->
     domain = req.headers['Host']
+    path = req.requested_path or req.path
 
-    baseURL = getQuickBasePath domain + '/' + req.requested_path.join('/')
+    baseURL = getQuickBasePath domain + '/' + path.join('/')
 
     return """
     <textarea style="margin: 2px; width: 701px; height: 318px;position: absolute;position: absolute;top: 0;left: 0;bottom: 0;right: 0;margin: auto;">
