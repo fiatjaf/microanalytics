@@ -12,6 +12,7 @@ send = (event, value) ->
     e: event
     v: value
     i: window.mai
+    d: (new Date).toISOString()
     r: document.referrer
     s: session
   post homeurl + '/track', info, (text) ->
