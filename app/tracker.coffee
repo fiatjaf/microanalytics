@@ -1,11 +1,6 @@
 post = require './micropost.coffee'
-cuid = require 'lib/cuid'
 
 homeurl = document.getElementById('ma').src.split('/').slice(0, -1).join('/')
-session = localStorage.s
-if not session
-  session = cuid.slug()
-  localStorage.s = session
 
 send = (event, value) ->
   info =
@@ -14,7 +9,6 @@ send = (event, value) ->
     i: window.mai
     d: (new Date).toISOString()
     r: document.referrer
-    s: session
   post homeurl + '/track', info, (text) ->
     console.log text
 

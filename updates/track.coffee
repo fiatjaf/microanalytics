@@ -1,4 +1,6 @@
 (doc, req) ->
+  cuid = require 'lib/cuid'
+
   try
     data = JSON.parse req.body
   catch e
@@ -16,16 +18,26 @@
     # fallback on our own date here
     date = (new Date).toISOString()
 
+  # session is on cookie
+  session = req.cookie.ma
+  if not session
+    session = cuid(req.uuid)
+
   doc =
     _id: data.i + '-' + date
     event: data.e
     value: data.v or 1
     ip: req.peer
     page: req.headers['Referer']
-    session: data.s
+    session: session
     'user-agent': req.headers['User-agent']
 
   if data.r
     doc.referrer = data.r
 
-  return [doc, 'ok']
+  return [doc, {
+    code: 200
+    body: 'ok'
+    headers:
+      'Set-Cookie': "ma=#{session}; Max-Age=93312000"
+  }]
