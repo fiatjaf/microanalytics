@@ -8,7 +8,7 @@ getBasePath = (pathParts, hasRewrite=true) ->
       break if part == '_rewrite'
     return basePath.join '/'
   else
-    return ''
+    return pathParts[0]
 getQuickBasePath = (fullPathName) ->
   pathParts = getPathParts fullPathName
   hasRewrite = getHasRewrite pathParts
