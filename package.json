@@ -4,9 +4,9 @@
   "description": "A web analytics CouchApp.",
   "scripts": {
     "build-prod": "npm run build && npm run minify",
-    "minify": "uglifyjs _attachments/tracker.js -o _attachments/tracker.js",
+    "minify": "uglifyjs app/widget.js -o app/widget.js",
     "build": "npm run build-js && npm run build-ddoc",
-    "build-js": "NODE_PATH=. browserify -t coffeeify app/tracker.coffee > _attachments/tracker.js",
+    "build-js": "NODE_PATH=. browserify -t coffeeify app/tracker.coffee > app/widget.js",
     "build-ddoc": "coffee --bare -c shows/. updates/. views/. lists/. validate_doc_update.coffee lib/."
   },
   "keywords": [

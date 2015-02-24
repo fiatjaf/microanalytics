@@ -4,7 +4,7 @@ This is your personal self-hosted simplistic web-analytics and event tracker tha
 
 ## Installation
 
-Push this as a Design Document to some CouchDB provider ([Cloudant](https://cloudant.com/), [Smileupps](https://www.smileupps.com/), [Iriscouch](https://www.iriscouch.com/)), or your own CouchDB instance, then go to `http://your-host.com/microanalytics/_design/microanalytics/_rewrite` and get a tracking code and Javascript snippet to install in your website. Go there again to get a new tracking code, for another website.
+Push this as a Design Document to some CouchDB provider ([Cloudant](https://cloudant.com/), [Smileupps](https://www.smileupps.com/), [Iriscouch](https://www.iriscouch.com/)), or your own CouchDB instance, then go to `http://your-host.com/microanalytics/_design/microanalytics/_rewrite` and get a tracking code and Javascript widget to install in your website. Go there again to get a new tracking code, for another website.
 
 ### To push
 
@@ -29,7 +29,7 @@ If you're deploying to Cloudant you'll need to compile the Coffeescript code to 
 
 ## Usage
 
-The Javascript snippet will come with a call to `ma('pageView')`. It is not mandatory to have it, but is the most basic event you may want to track and the basis of unique session count. To track other events, just call `ma('event_name', '[value]')` anywhere.
+The Javascript widget will come with a call to `ma('pageView')`. It is not mandatory to have it, but is the most basic event you may want to track and the basis of unique session count. To track other events, just call `ma('event_name', '[value]')` anywhere.
 
 After that, download our [Python command line client](https://github.com/fiatjaf/microanalytics-cli) to visualize, analytics and play with your data.
 

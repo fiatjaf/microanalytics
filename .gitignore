@@ -3,3 +3,4 @@ Makefile
 *.swo
 *.swp
 validate_doc_update.js
+app/*.js
